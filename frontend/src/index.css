@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Dark theme (default) ── */
+:root, [data-theme="dark"] {
+  --ink:     #0A0A0F;
+  --surface: #13131A;
+  --panel:   #1C1C27;
+  --border:  #2A2A3A;
+  --muted:   #4A4A6A;
+  --text:    #E8E8F0;
+  --dim:     #8888AA;
+  color-scheme: dark;
+}
+
+/* ── Light theme ── */
+[data-theme="light"] {
+  --ink:     #F4F4F8;
+  --surface: #FFFFFF;
+  --panel:   #F0F0F5;
+  --border:  #DDDDE8;
+  --muted:   #AAAACC;
+  --text:    #111118;
+  --dim:     #666688;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--ink);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Tailwind overrides to use CSS vars */
+.bg-ink     { background-color: var(--ink) !important; }
+.bg-surface { background-color: var(--surface) !important; }
+.bg-panel   { background-color: var(--panel) !important; }
+.border-border { border-color: var(--border) !important; }
+.text-text  { color: var(--text) !important; }
+.text-dim   { color: var(--dim) !important; }
+.text-muted { color: var(--muted) !important; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Recharts tooltip */
+.recharts-default-tooltip {
+  background: var(--panel) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+.recharts-tooltip-item { color: var(--text) !important; }
+.recharts-tooltip-label { color: var(--dim) !important; }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fadeUp          { animation: fadeUp 0.4s ease both; }
+.animate-fadeUp-delay-1  { animation: fadeUp 0.4s 0.1s ease both; }
+.animate-fadeUp-delay-2  { animation: fadeUp 0.4s 0.2s ease both; }
+.animate-fadeUp-delay-3  { animation: fadeUp 0.4s 0.3s ease both; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--panel) 25%, var(--border) 50%, var(--panel) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* Select styling for light mode */
+select {
+  background-color: var(--panel);
+  color: var(--dim);
+  border-color: var(--border);
+}
+
+/* Input styling */
+input {
+  background-color: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}

@@ -1,0 +1,57 @@
+{
+  "cards": [
+    {
+      "id": "amex_bce",
+      "name": "Amex Blue Cash Everyday",
+      "bank": "American Express",
+      "reward_type": "cashback",
+      "currency": "USD",
+      "reward_rules": [
+        {"categories": ["Supermarkets", "Groceries"], "rate": 0.03, "cap_annual": 6000, "cap_category": "supermarkets_annual", "description": "3% at U.S. Supermarkets"},
+        {"categories": ["Online Shopping", "Online Retail"], "rate": 0.03, "cap_annual": 6000, "cap_category": "online_annual", "description": "3% on U.S. Online Retail"},
+        {"categories": ["Gas", "Gas Stations", "Fuel"], "rate": 0.03, "cap_annual": 6000, "cap_category": "gas_annual", "description": "3% at U.S. Gas Stations"},
+        {"categories": ["*"], "rate": 0.01, "description": "1% on everything else"}
+      ]
+    },
+    {
+      "id": "bofa_ccr",
+      "name": "BofA Customized Cash Rewards",
+      "bank": "Bank of America",
+      "reward_type": "cashback",
+      "currency": "USD",
+      "preferred_rewards_bonus": 0.0,
+      "chosen_3pct_category": "Dining",
+      "reward_rules": [
+        {"categories": ["Dining", "Restaurants"], "rate": 0.03, "cap_combined_quarterly": 2500, "cap_category": "chosen_combined_quarterly", "description": "3% on chosen category"},
+        {"categories": ["Supermarkets", "Groceries", "Wholesale Clubs"], "rate": 0.02, "cap_combined_quarterly": 2500, "cap_category": "chosen_combined_quarterly", "description": "2% Grocery & Wholesale"},
+        {"categories": ["*"], "rate": 0.01, "description": "1% on everything else"}
+      ]
+    },
+    {
+      "id": "chase_sapphire_preferred",
+      "name": "Chase Sapphire Preferred",
+      "bank": "Chase",
+      "reward_type": "points",
+      "point_value_cents": 1.25,
+      "reward_rules": [
+        {"categories": ["Dining", "Restaurants", "Fast Food", "Coffee"], "rate": 3, "description": "3x on Dining"},
+        {"categories": ["Travel", "Hotels", "Airlines"], "rate": 2, "description": "2x on Travel"},
+        {"categories": ["Online Shopping"], "rate": 3, "description": "3x on Online Grocery/Streaming"},
+        {"categories": ["*"], "rate": 1, "description": "1x on everything else"}
+      ]
+    },
+    {
+      "id": "amex_gold",
+      "name": "Amex Gold Card",
+      "bank": "American Express",
+      "reward_type": "points",
+      "point_value_cents": 1.0,
+      "reward_rules": [
+        {"categories": ["Dining", "Restaurants", "Fast Food", "Coffee"], "rate": 4, "description": "4x at Restaurants"},
+        {"categories": ["Supermarkets", "Groceries"], "rate": 4, "cap_annual": 25000, "cap_category": "supermarkets_annual", "description": "4x at U.S. Supermarkets"},
+        {"categories": ["Travel", "Airlines"], "rate": 3, "description": "3x on Flights"},
+        {"categories": ["*"], "rate": 1, "description": "1x on everything else"}
+      ]
+    }
+  ]
+}

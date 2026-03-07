@@ -1,0 +1,13 @@
+backend/.env
+frontend/.env
+__pycache__/
+*.pyc
+env/
+venv/
+backend/data/db.sqlite
+backend/data/statements/
+frontend/node_modules/
+frontend/dist/
+frontend/.vercel
+.DS_Store
+.railway
