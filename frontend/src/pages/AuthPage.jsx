@@ -1,82 +1,181 @@
 import { useState } from 'react'
 import { supabase } from '../utils/supabase'
-import { Loader2 } from 'lucide-react'
+import { Mail, Lock, Chrome, Github, Apple, Loader2 } from 'lucide-react'
+import clsx from 'clsx'
 
 export default function AuthPage() {
-  const [mode, setMode] = useState('login') // 'login' | 'signup'
+  const [mode, setMode] = useState('signin') // 'signin' | 'signup' | 'reset'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(null)
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
 
-  const handleSubmit = async () => {
-    setLoading(true); setError(null); setMessage(null)
+  const handle = async (action) => {
+    setLoading(action)
+    setError(null)
+    setMessage(null)
     try {
-      if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password })
-        if (error) throw error
-        setMessage('Check your email to confirm your account.')
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) throw error
+      if (action === 'google') {
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: window.location.origin }
+        })
+      } else if (action === 'github') {
+        await supabase.auth.signInWithOAuth({
+          provider: 'github',
+          options: { redirectTo: window.location.origin }
+        })
+      } else if (action === 'apple') {
+        await supabase.auth.signInWithOAuth({
+          provider: 'apple',
+          options: { redirectTo: window.location.origin }
+        })
+      } else if (action === 'email') {
+        if (mode === 'signup') {
+          const { error } = await supabase.auth.signUp({ email, password })
+          if (error) throw error
+          setMessage('Check your email for a confirmation link.')
+        } else if (mode === 'reset') {
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/reset-password`
+          })
+          if (error) throw error
+          setMessage('Password reset email sent — check your inbox.')
+        } else {
+          const { error } = await supabase.auth.signInWithPassword({ email, password })
+          if (error) throw error
+        }
       }
     } catch (e) {
       setError(e.message)
     } finally {
-      setLoading(false)
+      setLoading(null)
     }
   }
 
   return (
     <div className="min-h-screen bg-ink flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
-            <span className="text-white font-bold">C</span>
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-bold text-xl">C</span>
           </div>
-          <span className="font-display font-bold text-2xl text-text">CardLens</span>
+          <h1 className="font-display font-bold text-2xl text-text">CardLens</h1>
+          <p className="text-dim text-sm mt-1">Your credit card analyzer</p>
         </div>
 
-        <div className="bg-panel border border-border rounded-2xl p-8">
-          <h2 className="font-display font-bold text-xl text-text mb-1">
-            {mode === 'login' ? 'Welcome back' : 'Create account'}
-          </h2>
-          <p className="text-dim text-sm mb-6">
-            {mode === 'login' ? 'Sign in to your account' : 'Start tracking your rewards'}
-          </p>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-mono text-dim uppercase tracking-widest mb-2">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-surface border border-border text-text text-sm focus:outline-none focus:border-violet-500 transition-colors"
-                placeholder="you@example.com" />
+        <div className="bg-panel border border-border rounded-2xl p-6">
+          {/* Mode tabs */}
+          {mode !== 'reset' && (
+            <div className="flex bg-surface border border-border rounded-xl p-1 mb-6">
+              {[['signin', 'Sign In'], ['signup', 'Sign Up']].map(([v, l]) => (
+                <button key={v} onClick={() => { setMode(v); setError(null); setMessage(null) }}
+                  className={clsx('flex-1 py-2 rounded-lg text-sm font-medium transition-all',
+                    mode === v ? 'bg-panel text-text shadow-sm' : 'text-dim hover:text-text')}>
+                  {l}
+                </button>
+              ))}
             </div>
-            <div>
-              <label className="block text-xs font-mono text-dim uppercase tracking-widest mb-2">Password</label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-                className="w-full px-4 py-3 rounded-xl bg-surface border border-border text-text text-sm focus:outline-none focus:border-violet-500 transition-colors"
-                placeholder="••••••••" />
+          )}
+
+          {mode === 'reset' && (
+            <div className="mb-6">
+              <h2 className="font-display font-semibold text-text mb-1">Reset Password</h2>
+              <p className="text-dim text-xs">Enter your email and we'll send a reset link.</p>
             </div>
-          </div>
+          )}
 
-          {error && <p className="mt-4 text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">{error}</p>}
-          {message && <p className="mt-4 text-emerald text-xs bg-emerald/10 border border-emerald/20 rounded-lg px-3 py-2">{message}</p>}
+          {/* OAuth buttons */}
+          {mode !== 'reset' && (
+            <div className="space-y-2 mb-5">
+              {[
+                { action: 'google', label: 'Continue with Google',  Icon: Chrome, color: 'hover:border-red-400/30' },
+                { action: 'apple',  label: 'Continue with Apple',   Icon: Apple,  color: 'hover:border-gray-400/30' },
+                { action: 'github', label: 'Continue with GitHub',  Icon: Github, color: 'hover:border-white/20' },
+              ].map(({ action, label, Icon, color }) => (
+                <button key={action} onClick={() => handle(action)} disabled={!!loading}
+                  className={clsx(
+                    'w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border border-border bg-surface text-text text-sm font-medium transition-all disabled:opacity-50',
+                    color
+                  )}>
+                  {loading === action
+                    ? <Loader2 size={16} className="animate-spin text-dim" />
+                    : <Icon size={16} className="text-dim" />
+                  }
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
 
-          <button onClick={handleSubmit} disabled={loading}
-            className="w-full mt-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-display font-semibold text-sm transition-all flex items-center justify-center gap-2">
-            {loading ? <><Loader2 size={16} className="animate-spin" />Please wait…</> : mode === 'login' ? 'Sign In' : 'Create Account'}
-          </button>
+          {/* Divider */}
+          {mode !== 'reset' && (
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-dim text-xs font-mono">or</span>
+              <div className="flex-1 h-px bg-border" />
+            </div>
+          )}
 
-          <p className="mt-4 text-center text-dim text-xs">
-            {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
-            <button onClick={() => setMode(mode === 'login' ? 'signup' : 'login')} className="text-violet-400 hover:text-violet-300 transition-colors">
-              {mode === 'login' ? 'Sign up' : 'Sign in'}
+          {/* Email form */}
+          <div className="space-y-3">
+            <div className="relative">
+              <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" />
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="Email address"
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border bg-surface text-text text-sm focus:outline-none focus:border-violet-500 transition-colors"
+              />
+            </div>
+
+            {mode !== 'reset' && (
+              <div className="relative">
+                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Password"
+                  onKeyDown={e => e.key === 'Enter' && handle('email')}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border bg-surface text-text text-sm focus:outline-none focus:border-violet-500 transition-colors"
+                />
+              </div>
+            )}
+
+            {error && <p className="text-red-400 text-xs px-1">{error}</p>}
+            {message && <p className="text-emerald text-xs px-1">{message}</p>}
+
+            <button onClick={() => handle('email')} disabled={!!loading || !email || (mode !== 'reset' && !password)}
+              className="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white text-sm font-display font-semibold transition-all flex items-center justify-center gap-2">
+              {loading === 'email' && <Loader2 size={14} className="animate-spin" />}
+              {mode === 'signin' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
             </button>
-          </p>
+          </div>
+
+          {/* Footer links */}
+          <div className="mt-4 text-center space-y-1">
+            {mode === 'signin' && (
+              <button onClick={() => { setMode('reset'); setError(null); setMessage(null) }}
+                className="text-xs text-dim hover:text-text transition-colors block w-full">
+                Forgot password?
+              </button>
+            )}
+            {mode === 'reset' && (
+              <button onClick={() => { setMode('signin'); setError(null); setMessage(null) }}
+                className="text-xs text-dim hover:text-text transition-colors">
+                ← Back to sign in
+              </button>
+            )}
+          </div>
         </div>
+
+        <p className="text-center text-dim text-xs mt-6">
+          Secured by Supabase Auth · Your data is private
+        </p>
       </div>
     </div>
   )
