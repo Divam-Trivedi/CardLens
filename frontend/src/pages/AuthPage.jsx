@@ -91,15 +91,15 @@ export default function AuthPage() {
           {mode !== 'reset' && (
             <div className="flex justify-center gap-3 mb-5">
               {[
-                { action: 'google', logo: 'frontend/public/logos/google_logo.png' },
-                { action: 'apple',  logo: 'frontend/public/logos/apple_logo.png'  },
-                { action: 'github', logo: 'frontend/public/logos/github_logo.png' },
+                { action: 'google', logo: 'logos/google_logo.png' },
+                // { action: 'apple',  logo: 'logos/apple_logo_white.png'  },
+                { action: 'github', logo: 'logos/github_logo.png' },
               ].map(({ action, logo }) => (
                 <button key={action} onClick={() => handle(action)} disabled={!!loading}
                   className="w-12 h-12 rounded-xl border border-border bg-surface hover:border-muted flex items-center justify-center transition-all disabled:opacity-50">
                   {loading === action
                     ? <Loader2 size={16} className="animate-spin text-dim" />
-                    : <img src={logo} alt={action} className="w-5 h-5 object-contain" />
+                    : <img src={logo} alt={action} className="w-10 h-10 object-contain" />
                   }
                 </button>
               ))}
