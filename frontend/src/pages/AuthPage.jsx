@@ -89,22 +89,18 @@ export default function AuthPage() {
 
           {/* OAuth buttons */}
           {mode !== 'reset' && (
-            <div className="space-y-2 mb-5">
+            <div className="flex justify-center gap-3 mb-5">
               {[
-                { action: 'google', label: 'Continue with Google',  Icon: Chrome, color: 'hover:border-red-400/30' },
-                { action: 'apple',  label: 'Continue with Apple',   Icon: Apple,  color: 'hover:border-gray-400/30' },
-                { action: 'github', label: 'Continue with GitHub',  Icon: Github, color: 'hover:border-white/20' },
-              ].map(({ action, label, Icon, color }) => (
+                { action: 'google', logo: 'frontend/public/logos/google_logo.png' },
+                { action: 'apple',  logo: 'frontend/public/logos/apple_logo.png'  },
+                { action: 'github', logo: 'frontend/public/logos/github_logo.png' },
+              ].map(({ action, logo }) => (
                 <button key={action} onClick={() => handle(action)} disabled={!!loading}
-                  className={clsx(
-                    'w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border border-border bg-surface text-text text-sm font-medium transition-all disabled:opacity-50',
-                    color
-                  )}>
+                  className="w-12 h-12 rounded-xl border border-border bg-surface hover:border-muted flex items-center justify-center transition-all disabled:opacity-50">
                   {loading === action
                     ? <Loader2 size={16} className="animate-spin text-dim" />
-                    : <Icon size={16} className="text-dim" />
+                    : <img src={logo} alt={action} className="w-5 h-5 object-contain" />
                   }
-                  {label}
                 </button>
               ))}
             </div>

@@ -189,7 +189,6 @@ def delete_card(card_id: str, user_id: str = Depends(get_current_user)):
     if stmt_ids:
         db.table("transactions").delete().in_("statement_id", stmt_ids).execute()
     db.table("statements").delete().eq("user_id", user_id).eq("card_id", card_id).execute()
-    # Only delete the card row if no other user has statements for it
     other = db.table("statements").select("id").eq("card_id", card_id).execute().data
     if not other:
         db.table("cards").delete().eq("id", card_id).execute()
@@ -282,7 +281,7 @@ def add_card(card: dict, user_id: str = Depends(get_current_user)):
     db = get_db()
     existing = db.table("cards").select("id").eq("id", card["id"]).execute().data
     if existing:
-        return {"status": "exists", "card_id": card["id"]}  # Already in DB, that's fine
+        return {"status": "exists", "card_id": card["id"]}
     db.table("cards").insert({
         "id": card["id"],
         "name": card["name"],
@@ -297,7 +296,6 @@ def reset_all_data(user_id: str = Depends(get_current_user)):
     db = get_db()
     db.table("transactions").delete().eq("user_id", user_id).execute()
     db.table("statements").delete().eq("user_id", user_id).execute()
-    # Clean up orphaned cards
     all_cards = db.table("cards").select("id").execute().data
     for card in all_cards:
         remaining = db.table("statements").select("id").eq("card_id", card["id"]).execute().data
